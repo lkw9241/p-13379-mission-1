@@ -2,14 +2,11 @@ package com.ll;
 
 public class Calc {
     public static int run(String expr) {
-        if ("10 + 5".equals(expr)) {
-            return 15;
-        }
+        String[] exprBits = expr.split(" \\+ ");
 
-        if ("20 + 5".equals(expr)) {
-            return 25;
-        }
+        int num1 = Integer.parseInt(exprBits[0]);
+        int num2 = Integer.parseInt(exprBits[1]);
 
-        return 8;
+        return num1 + num2;
     }
 }
