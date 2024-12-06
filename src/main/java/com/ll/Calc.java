@@ -9,14 +9,29 @@ public class Calc {
         expr = expr.replaceAll(" - ", " + -");
 
         if (expr.contains("(")) {
-            String[] exprBits = splitTwoParts(expr);
+            String[] exprBits = splitTwoPartsBy(expr, '+');
 
-            int sum = Arrays.stream(exprBits)
-                    .map(Calc::run)
-                    .reduce((a, b) -> a + b)
-                    .orElse(0);
+            if (exprBits != null) {
+                int sum = Arrays.stream(exprBits)
+                        .map(Calc::run)
+                        .reduce((a, b) -> a + b)
+                        .orElse(0);
 
-            return sum;
+                return sum;
+            }
+
+            exprBits = splitTwoPartsBy(expr, '*');
+
+            if (exprBits != null) {
+                int product = Arrays.stream(exprBits)
+                        .map(Calc::run)
+                        .reduce((a, b) -> a * b)
+                        .orElse(0);
+
+                return product;
+            }
+
+            throw new IllegalArgumentException("Invalid expression: " + expr);
         }
 
         if (expr.contains(" * ") && expr.contains(" + ")) {
@@ -51,13 +66,13 @@ public class Calc {
         return sum;
     }
 
-    private static String[] splitTwoParts(String expr) {
+    private static String[] splitTwoPartsBy(String expr, char splitBy) {
         int bracketDepth = 0;
 
         for (int i = 0; i < expr.length(); i++) {
             char c = expr.charAt(i);
 
-            if (bracketDepth == 0 && c == '+') {
+            if (bracketDepth == 0 && c == splitBy) {
                 return new String[]{expr.substring(0, i), expr.substring(i + 1)};
             } else if (c == '(') {
                 bracketDepth++;
@@ -66,7 +81,7 @@ public class Calc {
             }
         }
 
-        throw new IllegalArgumentException("Invalid expression: " + expr);
+        return null;
     }
 
     private static String removeUnnecessaryBrackets(String expr) {
