@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 public class Calc {
     public static int run(String expr) {
+        expr = removeUnnecessaryBrackets(expr);
+
         if (expr.contains(" * ") && expr.contains(" + ")) {
             String[] exprBits = expr.split(" \\+ ");
 
@@ -36,5 +38,13 @@ public class Calc {
                 .orElse(0);
 
         return sum;
+    }
+
+    private static String removeUnnecessaryBrackets(String expr) {
+        if (expr.startsWith("(") && expr.endsWith(")")) {
+            return expr.substring(1, expr.length() - 1);
+        }
+
+        return expr;
     }
 }
