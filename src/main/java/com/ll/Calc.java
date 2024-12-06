@@ -23,6 +23,7 @@ public class Calc {
         }
 
         expr = removeUnnecessaryBrackets(expr);
+        expr = transformMinusOuterBracketToPlus(expr);
         expr = expr.replaceAll(" - ", " + -");
 
         if (isDebug) {
@@ -89,6 +90,14 @@ public class Calc {
         printRsOnDebugMode(rs, depth);
 
         return rs;
+    }
+
+    private static String transformMinusOuterBracketToPlus(String expr) {
+        if (expr.startsWith("-(") && expr.endsWith(")")) {
+            return expr.substring(1, expr.length()) + " * -1";
+        }
+
+        return expr;
     }
 
     private static String[] splitTwoPartsBy(String expr, char splitBy) {
