@@ -119,10 +119,30 @@ public class Calc {
     }
 
     private static String removeUnnecessaryBrackets(String expr) {
-        if (expr.startsWith("(") && expr.endsWith(")")) {
+        if (isOneBracketed(expr)) {
             return removeUnnecessaryBrackets(expr.substring(1, expr.length() - 1));
         }
 
         return expr;
+    }
+
+    private static boolean isOneBracketed(String expr) {
+        if (!expr.startsWith("(") || !expr.endsWith(")")) return false;
+
+        int bracketDepth = 0;
+
+        for (int i = 0; i < expr.length(); i++) {
+            char c = expr.charAt(i);
+
+            if (c == '(') {
+                bracketDepth++;
+            } else if (c == ')') {
+                bracketDepth--;
+            }
+
+            if (bracketDepth == 0 && i != expr.length() - 1) return false;
+        }
+
+        return true;
     }
 }
