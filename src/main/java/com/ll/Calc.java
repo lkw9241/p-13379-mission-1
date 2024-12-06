@@ -3,22 +3,37 @@ package com.ll;
 import java.util.Arrays;
 
 public class Calc {
+    private static boolean isDebug = true;
+
     public static int run(String expr) {
+        return _run(expr, 0);
+    }
+
+    public static int _run(String expr, int depth) {
         expr = expr.trim();
+
+        if (isDebug) {
+            System.out.print("  ".repeat(depth) + "expr[" + depth + "] { raw : " + expr);
+        }
+
         expr = removeUnnecessaryBrackets(expr);
         expr = expr.replaceAll(" - ", " + -");
+
+        if (isDebug) {
+            System.out.println(", clean : " + expr + " }");
+        }
 
         if (expr.contains("(")) {
             String[] exprBits = splitTwoPartsBy(expr, '+');
 
             if (exprBits != null) {
-                return run(exprBits[0]) + run(exprBits[1]);
+                return _run(exprBits[0], depth + 1) + _run(exprBits[1], depth + 1);
             }
 
             exprBits = splitTwoPartsBy(expr, '*');
 
             if (exprBits != null) {
-                return run(exprBits[0]) * run(exprBits[1]);
+                return _run(exprBits[0], depth + 1) * _run(exprBits[1], depth + 1);
             }
 
             throw new IllegalArgumentException("Invalid expression: " + expr);
@@ -27,12 +42,10 @@ public class Calc {
         if (expr.contains(" * ") && expr.contains(" + ")) {
             String[] exprBits = expr.split(" \\+ ");
 
-            int sum = Arrays.stream(exprBits)
-                    .map(Calc::run)
+            return Arrays.stream(exprBits)
+                    .map(exprBit -> _run(exprBit, depth + 1))
                     .reduce((a, b) -> a + b)
                     .orElse(0);
-
-            return sum;
         }
 
         if (expr.contains(" * ")) {
